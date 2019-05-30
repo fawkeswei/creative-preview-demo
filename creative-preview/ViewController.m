@@ -10,7 +10,7 @@
 
 #import "ViewController.h"
 
-@interface ViewController () <GADUnifiedNativeAdLoaderDelegate, GADAdLoaderDelegate>
+@interface ViewController () <GADNativeCustomTemplateAdLoaderDelegate, GADAdLoaderDelegate>
 
 @property (nonatomic, strong) GADAdLoader *adLoader;
 @property (weak, nonatomic) IBOutlet UILabel *timestampLabel;
@@ -30,18 +30,22 @@
     self.adLoader = [[GADAdLoader alloc]
                      initWithAdUnitID:@"/21787483995/Fishstick_debug"
                      rootViewController:self
-                     adTypes:@[kGADAdLoaderAdTypeUnifiedNative]
+                     adTypes:@[kGADAdLoaderAdTypeNativeCustomTemplate]
                      options:nil];
     self.adLoader.delegate = self;
 }
 
-- (void)adLoader:(GADAdLoader *)adLoader didReceiveUnifiedNativeAd:(GADUnifiedNativeAd *)nativeAd {
+- (NSArray<NSString *> *)nativeCustomTemplateIDsForAdLoader:(GADAdLoader *)adLoader {
+    return @[@"11823267"];
+}
+
+- (void)adLoader:(GADAdLoader *)adLoader didReceiveNativeCustomTemplateAd:(GADNativeCustomTemplateAd *)nativeCustomTemplateAd {
     [self.activityIndicatorView stopAnimating];
     
     self.timestampLabel.text = [NSDate date].description;
-    self.titleLabel.text = nativeAd.headline;
-    self.bodyLabel.text = nativeAd.body;
-    [self.callToActionButton setTitle:nativeAd.callToAction forState:UIControlStateNormal];
+    self.titleLabel.text = [nativeCustomTemplateAd stringForKey:@"text"];
+    self.bodyLabel.text = nil;
+    [self.callToActionButton setTitle:nil forState:UIControlStateNormal];
 }
 
 - (void)adLoader:(nonnull GADAdLoader *)adLoader didFailToReceiveAdWithError:(nonnull GADRequestError *)error {
